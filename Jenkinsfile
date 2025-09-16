@@ -2,18 +2,15 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'
-        jdk 'JDK21'
-    }
-
-    environment {
-        IMAGE_NAME = "devops-app"
+        maven 'Maven3'   // Make sure Jenkins has Maven installed and named 'Maven3'
+        jdk 'JDK21'      // Make sure Jenkins has JDK 21 installed and named 'JDK21'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // Pull code from your GitHub repo
+                git branch: 'main', url: 'https://github.com/BK-KRISH/DevOps-App.git'
             }
         }
 
@@ -23,31 +20,28 @@ pipeline {
             }
         }
 
-        stage('Archive Artifact') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME}:latest .'
+                sh 'docker build -t devops-app .'
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker Container') {
             steps {
-                sh 'docker run --rm ${IMAGE_NAME}:latest'
+                // Stop & remove any old container, ignore errors if not exists
+                sh 'docker rm -f devops-app-container || true'
+                // Run fresh container
+                sh 'docker run -d --name devops-app-container devops-app'
             }
         }
     }
 
     post {
         success {
-            echo "✅ Build, Docker image, and container run completed successfully!"
+            echo "✅ Pipeline completed successfully!"
         }
         failure {
-            echo "❌ Build failed. Please check logs."
+            echo "❌ Pipeline failed. Check logs."
         }
     }
 }
