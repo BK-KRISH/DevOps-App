@@ -30,7 +30,7 @@ pipeline {
     steps {
         bat 'docker rm -f devops-app-container || exit 0'
         bat 'timeout /t 5'
-        bat 'docker run -d -p 8081:8080 --name devops-app-container devops-app'
+        bat 'docker run -d -p 8080:8080 --name devops-app-container devops-app'
     }
 }
 
