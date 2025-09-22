@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven3'   // Make sure Jenkins has Maven installed and named 'Maven3'
-        jdk 'JDK21'      // Make sure Jenkins has JDK 21 installed and named 'JDK21'
+        maven 'Maven3'   // Jenkins tool config: Maven installation named 'Maven3'
+        jdk 'JDK21'      // Jenkins tool config: JDK installation named 'JDK21'
     }
 
     stages {
@@ -22,16 +22,16 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t devops-app .'
+                bat 'docker build -t devops-app .'
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                // Stop & remove any old container, ignore errors if not exists
-                sh 'docker rm -f devops-app-container || true'
-                // Run fresh container
-                sh 'docker run -d --name devops-app-container devops-app'
+                // Stop & remove old container if it exists
+                bat 'docker rm -f devops-app-container || exit 0'
+                // Run new container
+                bat 'docker run -d --name devops-app-container devops-app'
             }
         }
     }
