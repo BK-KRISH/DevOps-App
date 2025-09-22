@@ -27,13 +27,12 @@ pipeline {
         }
 
         stage('Run Docker Container') {
-            steps {
-                // Stop & remove old container if it exists
-                bat 'docker rm -f devops-app-container || exit 0'
-                // Run new container
-                bat 'docker run -d --name devops-app-container devops-app'
-            }
-        }
+    steps {
+        bat 'docker rm -f devops-app-container || exit 0'
+        bat 'docker run -d -p 8080:8080 --name devops-app-container devops-app'
+    }
+}
+
     }
 
     post {
